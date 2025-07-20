@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>原料使用记录</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
       background-color: #f8f8f8;
       padding: 20px;
+      max-width: 700px;
+      margin: auto;
     }
 
     h1 {
@@ -23,12 +26,14 @@
       border-radius: 5px;
     }
 
-    select, input {
+    input.material-input,
+    input.amount-input {
       width: 45%;
       padding: 8px;
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 4px;
+      box-sizing: border-box;
     }
 
     button {
@@ -42,6 +47,10 @@
       border-radius: 4px;
     }
 
+    button:hover {
+      background-color: #357ae8;
+    }
+
     #result {
       margin-top: 20px;
       background-color: #fff;
@@ -49,6 +58,28 @@
       border-radius: 5px;
       white-space: pre-wrap;
       font-family: monospace;
+    }
+
+    #suggestion-box {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+      width: 45%;
+      font-size: 16px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .suggestion-item {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .suggestion-item:hover {
+      background-color: #f0f0f0;
     }
   </style>
 </head>
@@ -62,6 +93,107 @@
 
   <div id="result"></div>
 
-  <script src="script.js"></script>
+  <div id="suggestion-box"></div>
+
+  <script>
+    let materials = [];
+    let entries = [];
+
+    // 加载原料文件
+    fetch('materials.json')
+      .then(res => res.json())
+      .then(data => {
+        materials = data;
+        addEntry(); // 默认添加一个原料框
+      });
+
+    function addEntry() {
+      const container = document.getElementById('entries');
+      const index = entries.length;
+
+      const div = document.createElement('div');
+      div.className = 'entry';
+      div.dataset.index = index;
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = '输入或选择原料名称';
+      input.className = 'material-input';
+      input.dataset.index = index;
+
+      const amountInput = document.createElement('input');
+      amountInput.type = 'number';
+      amountInput.step = '0.1';
+      amountInput.placeholder = '输入用量';
+      amountInput.className = 'amount-input';
+      amountInput.dataset.index = index;
+
+      // 输入联想功能
+      input.addEventListener('input', function () {
+        const typed = this.value.toLowerCase();
+        const suggestions = materials
+          .filter(m => m.name.toLowerCase().includes(typed))
+          .map(m => m.name);
+
+        showSuggestions(this, suggestions);
+      });
+
+      // 点击建议项
+      function showSuggestions(inputEl, suggestions) {
+        const index = inputEl.dataset.index;
+        const rect = inputEl.getBoundingClientRect();
+        const suggestionBox = document.getElementById('suggestion-box');
+
+        if (suggestions.length === 0) {
+          suggestionBox.style.display = 'none';
+          return;
+        }
+
+        suggestionBox.innerHTML = '';
+        suggestions.forEach(name => {
+          const div = document.createElement('div');
+          div.className = 'suggestion-item';
+          div.textContent = name;
+          div.onclick = function () {
+            inputEl.value = name;
+            suggestionBox.style.display = 'none';
+            entries[index].name = name;
+          };
+          suggestionBox.appendChild(div);
+        });
+
+        suggestionBox.style.display = 'block';
+        suggestionBox.style.top = `${rect.bottom + window.scrollY}px`;
+        suggestionBox.style.left = `${rect.left + window.scrollX}px`;
+      }
+
+      input.addEventListener('input', function () {
+        entries[index].name = this.value;
+      });
+
+      amountInput.addEventListener('input', function () {
+        entries[index].amount = this.value;
+      });
+
+      entries.push({ name: '', amount: '0.0' });
+      div.appendChild(input);
+      div.appendChild(amountInput);
+      container.appendChild(div);
+    }
+
+    function submitData() {
+      let result = "原料使用记录:\n";
+      entries.forEach(entry => {
+        const material = materials.find(m => m.name === entry.name);
+        if (material) {
+          result += `${material.tag}: ${entry.amount} 克\n`;
+        } else {
+          result += `${entry.name}: ${entry.amount} 克\n`;
+        }
+      });
+
+      document.getElementById('result').innerText = result;
+    }
+  </script>
 </body>
 </html>
