@@ -24,6 +24,7 @@
       background-color: #fff;
       padding: 10px;
       border-radius: 5px;
+      position: relative;
     }
 
     .material-input {
@@ -45,7 +46,7 @@
       width: 45%;
       font-size: 16px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      display: none;
+      display: block;
     }
 
     .suggestion-item {
@@ -136,51 +137,21 @@
       amountInput.className = 'amount-input';
       amountInput.dataset.index = index;
 
-      // 初始显示所有材料
-      materials.forEach(m => {
-        const item = document.createElement('div');
-        item.className = 'suggestion-item';
-        item.textContent = m.name;
-        item.onclick = function () {
-          input.value = m.name;
-          suggestions.style.display = 'none';
-          entries[index].name = m.name;
-        };
-        suggestions.appendChild(item);
-      });
+      // 页面加载时自动显示所有材料
+      updateSuggestions(input, suggestions, materials);
 
       // 输入事件
       input.addEventListener('input', function () {
         const typed = this.value.toLowerCase();
         const filtered = materials.filter(m => m.name.toLowerCase().includes(typed));
-        suggestions.innerHTML = '';
-        filtered.forEach(m => {
-          const item = document.createElement('div');
-          item.className = 'suggestion-item';
-          item.textContent = m.name;
-          item.onclick = function () {
-            input.value = m.name;
-            suggestions.style.display = 'none';
-            entries[index].name = m.name;
-          };
-          suggestions.appendChild(item);
-        });
-
-        if (filtered.length > 0) {
-          suggestions.style.display = 'block';
-          const rect = input.getBoundingClientRect();
-          suggestions.style.left = rect.left + 'px';
-          suggestions.style.top = rect.bottom + window.scrollY + 'px';
-        } else {
-          suggestions.style.display = 'none';
-        }
+        updateSuggestions(input, suggestions, filtered);
       });
 
-      // 移出事件
-      input.addEventListener('blur', function () {
-        setTimeout(() => {
+      // 点击空白处隐藏下拉框
+      window.addEventListener('click', function (e) {
+        if (e.target !== input) {
           suggestions.style.display = 'none';
-        }, 200);
+        }
       });
 
       // 输入变化
@@ -197,6 +168,22 @@
       div.appendChild(amountInput);
       div.appendChild(suggestions);
       container.appendChild(div);
+    }
+
+    function updateSuggestions(input, suggestions, list) {
+      suggestions.innerHTML = '';
+      list.forEach(m => {
+        const item = document.createElement('div');
+        item.className = 'suggestion-item';
+        item.textContent = m.name;
+        item.onclick = function () {
+          input.value = m.name;
+          input.focus();
+          suggestions.style.display = 'none';
+          entries[parseInt(input.dataset.index)].name = m.name;
+        };
+        suggestions.appendChild(item);
+      });
     }
 
     function submitData() {
