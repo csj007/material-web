@@ -162,8 +162,20 @@
   <h2>原料记录系统</h2>
   <button onclick="addMaterial()"><i class="fas fa-plus"></i> 添加原料</button>
   <button onclick="submitRecord()"><i class="fas fa-check"></i> 提交记录</button>
+   <button onclick="showAddMaterialModal()"><i class="fas fa-plus-square"></i> 新增药品</button>
   <div id="materialContainer"></div>
   <div id="output"></div>
+  <!-- 模态窗口 -->
+  <div id="addMaterialModal" style="display:none; position:fixed; top:20%; left:30%; background:#fff; padding:20px; border:1px solid #ccc; z-index:1000;">
+    <h3>新增药品</h3>
+    <label>药品名称:</label><br>
+    <input type="text" id="materialName" style="width:100%; margin-bottom:10px;"><br>
+    <label>药品编号:</label><br>
+    <input type="text" id="materialTag" style="width:100%; margin-bottom:10px;"><br>
+    <button onclick="addNewMaterial()">录入药品</button>
+    <button onclick="document.getElementById('addMaterialModal').style.display='none';">取消</button>
+    <div id="materialError" style="color:red; margin-top:10px;"></div>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
