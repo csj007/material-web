@@ -107,7 +107,7 @@ function copyTable(button) {
   document.execCommand("copy");
   document.body.removeChild(temp);
 
-  alert("表格已复制为可粘贴到 Excel 的格式（克数列将被识别为数字）");
+  alert("表格已复制为可粘贴到 Excel 的格式");
 }
 
 function saveTableAsImage(button) {
