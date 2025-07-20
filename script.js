@@ -72,6 +72,37 @@ function addMaterial() {
   container.appendChild(row);
 }
 
+function copyTable(button) {
+  const table = button.closest(".material-table");
+  const tableHTML = table.outerHTML;
+
+  // 创建临时 textarea
+  const temp = document.createElement("textarea");
+  temp.value = tableHTML;
+  document.body.appendChild(temp);
+  temp.select();
+  document.execCommand("copy");
+  document.body.removeChild(temp);
+
+  alert("表格已复制到剪贴板，可粘贴到 Excel 或 Word 中。");
+}
+
+function saveTableAsImage(button) {
+  const table = button.closest(".material-table");
+
+  html2canvas(table, {
+    useCORS: true,
+    allowTaint: true,
+    scale: 2,
+    logging: false
+  }).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "原料记录.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+}
+
 // 提交记录
 function submitRecord() {
   const rows = document.querySelectorAll(".material-row");
@@ -142,6 +173,10 @@ function createMaterialTable(materials, totalWeight, title) {
         </tr>
       </tbody>
     </table>
+    <div class="table-buttons">
+      <button onclick="copyTable(this)">复制表格</button>
+      <button onclick="saveTableAsImage(this)">保存为图片</button>
+    </div>
   `;
 
   return table;
