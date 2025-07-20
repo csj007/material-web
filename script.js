@@ -73,7 +73,14 @@ function addMaterial() {
 }
 
 function copyTable(button) {
-  const table = button.closest(".material-table");
+  const tableButtons = button.closest(".table-buttons");
+  const table = tableButtons.previousElementSibling;
+
+  if (!table || !table.classList.contains("material-table")) {
+    alert("无法找到表格！");
+    return;
+  }
+
   const tableHTML = table.outerHTML;
 
   // 创建临时 textarea
@@ -88,7 +95,13 @@ function copyTable(button) {
 }
 
 function saveTableAsImage(button) {
-  const table = button.closest(".material-table");
+  const tableButtons = button.closest(".table-buttons");
+  const table = tableButtons.previousElementSibling;
+
+  if (!table || !table.classList.contains("material-table")) {
+    alert("无法找到表格！");
+    return;
+  }
 
   html2canvas(table, {
     useCORS: true,
