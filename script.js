@@ -22,7 +22,6 @@ async function loadMaterials() {
 // 添加原料行
 function addMaterial() {
   const container = document.getElementById("materialContainer");
-
   const row = document.createElement("div");
   row.className = "material-row";
 
@@ -36,7 +35,7 @@ function addMaterial() {
     option.value = name;
     datalist.appendChild(option);
   }
-  document.body.appendChild(dalist);
+  document.body.appendChild(datalist);
 
   const input = document.createElement("input");
   input.type = "text";
