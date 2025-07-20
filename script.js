@@ -5,7 +5,7 @@ let nameToCode = {};
 // 从 JSON 文件加载数据
 async function loadMaterials() {
   try {
-    const response = await fetch('data/materials.json');
+    const response = await fetch('materials.json');
     const data = await response.json();
 
     for (const item of data) {
