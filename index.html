@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>原料使用记录</title>
   <style>
     body {
@@ -26,14 +26,43 @@
       border-radius: 5px;
     }
 
-    input.material-input,
-    input.amount-input {
+    .material-input {
       width: 45%;
       padding: 8px;
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 4px;
       box-sizing: border-box;
+    }
+
+    .material-suggestions {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 1000;
+      width: 45%;
+      font-size: 16px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: none;
+    }
+
+    .suggestion-item {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .suggestion-item:hover {
+      background-color: #f0f0f0;
+    }
+
+    input.amount-input {
+      width: 45%;
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
 
     button {
@@ -59,28 +88,6 @@
       white-space: pre-wrap;
       font-family: monospace;
     }
-
-    #suggestion-box {
-      position: absolute;
-      background: white;
-      border: 1px solid #ccc;
-      max-height: 150px;
-      overflow-y: auto;
-      z-index: 1000;
-      display: none;
-      width: 45%;
-      font-size: 16px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .suggestion-item {
-      padding: 8px;
-      cursor: pointer;
-    }
-
-    .suggestion-item:hover {
-      background-color: #f0f0f0;
-    }
   </style>
 </head>
 <body>
@@ -92,8 +99,6 @@
   <button onclick="submitData()">提交记录</button>
 
   <div id="result"></div>
-
-  <div id="suggestion-box"></div>
 
   <script>
     let materials = [];
@@ -113,13 +118,16 @@
 
       const div = document.createElement('div');
       div.className = 'entry';
-      div.dataset.index = index;
 
       const input = document.createElement('input');
       input.type = 'text';
-      input.placeholder = '输入或选择原料名称';
       input.className = 'material-input';
+      input.placeholder = '选择或输入原料名称';
       input.dataset.index = index;
+
+      const suggestions = document.createElement('div');
+      suggestions.className = 'material-suggestions';
+      suggestions.dataset.index = index;
 
       const amountInput = document.createElement('input');
       amountInput.type = 'number';
@@ -128,45 +136,54 @@
       amountInput.className = 'amount-input';
       amountInput.dataset.index = index;
 
-      // 输入联想功能
-      input.addEventListener('input', function () {
-        const typed = this.value.toLowerCase();
-        const suggestions = materials
-          .filter(m => m.name.toLowerCase().includes(typed))
-          .map(m => m.name);
-
-        showSuggestions(this, suggestions);
+      // 初始显示所有材料
+      materials.forEach(m => {
+        const item = document.createElement('div');
+        item.className = 'suggestion-item';
+        item.textContent = m.name;
+        item.onclick = function () {
+          input.value = m.name;
+          suggestions.style.display = 'none';
+          entries[index].name = m.name;
+        };
+        suggestions.appendChild(item);
       });
 
-      // 点击建议项
-      function showSuggestions(inputEl, suggestions) {
-        const index = inputEl.dataset.index;
-        const rect = inputEl.getBoundingClientRect();
-        const suggestionBox = document.getElementById('suggestion-box');
-
-        if (suggestions.length === 0) {
-          suggestionBox.style.display = 'none';
-          return;
-        }
-
-        suggestionBox.innerHTML = '';
-        suggestions.forEach(name => {
-          const div = document.createElement('div');
-          div.className = 'suggestion-item';
-          div.textContent = name;
-          div.onclick = function () {
-            inputEl.value = name;
-            suggestionBox.style.display = 'none';
-            entries[index].name = name;
+      // 输入事件
+      input.addEventListener('input', function () {
+        const typed = this.value.toLowerCase();
+        const filtered = materials.filter(m => m.name.toLowerCase().includes(typed));
+        suggestions.innerHTML = '';
+        filtered.forEach(m => {
+          const item = document.createElement('div');
+          item.className = 'suggestion-item';
+          item.textContent = m.name;
+          item.onclick = function () {
+            input.value = m.name;
+            suggestions.style.display = 'none';
+            entries[index].name = m.name;
           };
-          suggestionBox.appendChild(div);
+          suggestions.appendChild(item);
         });
 
-        suggestionBox.style.display = 'block';
-        suggestionBox.style.top = `${rect.bottom + window.scrollY}px`;
-        suggestionBox.style.left = `${rect.left + window.scrollX}px`;
-      }
+        if (filtered.length > 0) {
+          suggestions.style.display = 'block';
+          const rect = input.getBoundingClientRect();
+          suggestions.style.left = rect.left + 'px';
+          suggestions.style.top = rect.bottom + window.scrollY + 'px';
+        } else {
+          suggestions.style.display = 'none';
+        }
+      });
 
+      // 移出事件
+      input.addEventListener('blur', function () {
+        setTimeout(() => {
+          suggestions.style.display = 'none';
+        }, 200);
+      });
+
+      // 输入变化
       input.addEventListener('input', function () {
         entries[index].name = this.value;
       });
@@ -178,6 +195,7 @@
       entries.push({ name: '', amount: '0.0' });
       div.appendChild(input);
       div.appendChild(amountInput);
+      div.appendChild(suggestions);
       container.appendChild(div);
     }
 
