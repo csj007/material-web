@@ -90,7 +90,7 @@ function submitRecord() {
       finalName = nameToCode[name];
     }
 
-    result.push(`${finalName}: ${weight}`);
+    result.push(`${finalName}: ${weight}克`);
   }
 
   const outputDiv = document.getElementById("output");
