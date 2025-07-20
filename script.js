@@ -246,6 +246,62 @@ function createMaterialTable(materials, totalWeight, title) {
   return table;
 }
 
+function showAddMaterialModal() {
+  document.getElementById("addMaterialModal").style.display = "block";
+}
+
+async function addNewMaterial() {
+  const name = document.getElementById("materialName").value.trim();
+  const tag = document.getElementById("materialTag").value.trim();
+  const errorDiv = document.getElementById("materialError");
+
+  if (!name || !tag) {
+    errorDiv.textContent = "药品名称和编号不能为空";
+    return;
+  }
+
+  // 检查是否名称或编号已存在
+  if (name in nameToCode) {
+    errorDiv.textContent = "药品名称已存在";
+    return;
+  }
+  if (Object.values(nameToCode).includes(tag)) {
+    errorDiv.textContent = "药品编号已存在";
+    return;
+  }
+
+  // 从服务器获取当前的 materials.json
+  const response = await fetch("materials.json");
+  const data = await response.json();
+
+  // 新增药品
+  data.push({ name: name, tag: tag });
+
+  // 写入新的数据回 materials.json（需要服务端支持）
+  try {
+    const res = await fetch("save_materials.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      errorDiv.textContent = "";
+      alert("药品已成功添加！");
+      // 重新加载材料数据
+      await loadMaterials();
+      // 关闭弹窗
+      document.getElementById("addMaterialModal").style.display = "none";
+    } else {
+      errorDiv.textContent = "保存失败，请检查后端配置";
+    }
+  } catch (err) {
+    errorDiv.textContent = "保存失败：" + err;
+  }
+}
+
 // 页面加载完成后初始化
 window.onload = async () => {
   await loadMaterials();
