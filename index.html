@@ -94,18 +94,45 @@
         margin-bottom: 10px;
       }
     }
-    table {
+    
+    .material-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
+      font-family: 'Roboto', sans-serif;
+      color: #333;
     }
-    td {
-      border: 1px solid #ccc;
-      padding: 6px;
+    
+    .material-table th {
+      background-color: #3498db;
+      color: white;
+      padding: 10px;
       text-align: center;
+      border: 1px solid #ccc;
     }
-    tr:nth-child(2) td {
-      background-color: #f0f0f0;
+    
+    .material-table td {
+      padding: 8px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+    
+    .material-table tbody td {
+      background-color: #f9f9f9;
+    }
+    
+    .material-table thead tr:first-child th {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    
+    /* 响应式优化 */
+    @media (max-width: 600px) {
+      .material-table td,
+      .material-table th {
+        font-size: 14px;
+        padding: 6px;
+      }
     }
   </style>
 </head>
