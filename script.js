@@ -81,17 +81,32 @@ function copyTable(button) {
     return;
   }
 
-  const tableHTML = table.outerHTML;
+  // 获取表格中的所有行
+  const rows = table.querySelectorAll("tr");
+  let csvContent = "";
+
+  rows.forEach((row, rowIndex) => {
+    const cells = row.querySelectorAll("th, td");
+
+    const rowValues = Array.from(cells).map(cell => {
+      // 去掉单位只保留数值，让 Excel 能识别为数字
+      const content = cell.textContent.trim();
+      const numOnly = parseFloat(content);
+      return isNaN(numOnly) ? `"${content}"` : numOnly;
+    });
+
+    csvContent += rowValues.join("\t") + "\n";
+  });
 
   // 创建临时 textarea
   const temp = document.createElement("textarea");
-  temp.value = tableHTML;
+  temp.value = csvContent;
   document.body.appendChild(temp);
   temp.select();
   document.execCommand("copy");
   document.body.removeChild(temp);
 
-  alert("表格已复制到剪贴板，可粘贴到 Excel 或 Word 中。");
+  alert("表格已复制为可粘贴到 Excel 的格式（请用 Ctrl+V 粘贴）");
 }
 
 function saveTableAsImage(button) {
