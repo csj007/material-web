@@ -125,11 +125,34 @@ function saveTableAsImage(button) {
     scale: 2,
     logging: false
   }).then(canvas => {
-    const link = document.createElement("a");
-    link.download = "原料记录.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+    canvas.toBlob(blob => {
+      // 尝试复制到剪贴板（现代浏览器）
+      if (navigator.clipboard && navigator.clipboard.write) {
+        const image = new File([blob], "原料记录.png", { type: "image/png" });
+        const clipboardItem = new ClipboardItem({ [image.type]: image });
+
+        navigator.clipboard.write([clipboardItem]).then(() => {
+          alert("图片已复制到剪贴板，你现在可以粘贴到 Word、PPT、Excel、腾讯文档等。");
+        }).catch(() => {
+          // 如果复制失败，就自动下载
+          downloadImage(blob);
+        });
+      } else {
+        // 如果不支持 clipboard API，就自动下载
+        downloadImage(blob);
+      }
+    });
   });
+}
+
+// 自动下载图片函数
+function downloadImage(blob) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.download = "原料记录.png";
+  link.href = url;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 // 提交记录
