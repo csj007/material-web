@@ -17,43 +17,70 @@ function addEntry() {
   div.className = 'entry';
   div.dataset.index = index;
 
-  const select = document.createElement('select');
-  select.oninput = function () {
-    entries[index].name = this.value;
-  };
-
   const input = document.createElement('input');
-  input.type = 'number';
-  input.step = '0.1';
-  input.placeholder = '输入用量';
-  input.oninput = function () {
-    entries[index].amount = this.value;
-  };
+  input.type = 'text';
+  input.placeholder = '输入或选择原料名称';
+  input.className = 'material-input';
+  input.dataset.index = index;
 
-  // 填充下拉框
-  materials.forEach(m => {
-    const option = document.createElement('option');
-    option.value = m.name;
-    option.text = m.name;
-    select.appendChild(option);
-  });
-
-  // 设置默认值
-  const defaultMaterial = materials[0];
-  select.value = defaultMaterial ? defaultMaterial.name : '';
-  input.value = '0.0';
+  const amountInput = document.createElement('input');
+  amountInput.type = 'number';
+  amountInput.step = '0.1';
+  amountInput.placeholder = '输入用量';
+  amountInput.className = 'amount-input';
+  amountInput.dataset.index = index;
 
   // 输入联想功能
-  select.addEventListener('input', function () {
+  input.addEventListener('input', function () {
     const typed = this.value.toLowerCase();
-    const options = Array.from(this.options).filter(o => o.text.toLowerCase().includes(typed));
-    this.innerHTML = '';
-    options.forEach(o => this.appendChild(o.cloneNode(true)));
+    const suggestions = materials
+      .filter(m => m.name.toLowerCase().includes(typed))
+      .map(m => m.name);
+
+    showSuggestions(this, suggestions);
   });
 
-  entries.push({ name: defaultMaterial ? defaultMaterial.name : '', amount: '0.0' });
-  div.appendChild(select);
+  // 点击建议项
+  function showSuggestions(inputEl, suggestions) {
+    const index = inputEl.dataset.index;
+    const rect = inputEl.getBoundingClientRect();
+    const suggestionBox = document.getElementById('suggestion-box');
+
+    if (suggestions.length === 0) {
+      suggestionBox.style.display = 'none';
+      return;
+    }
+
+    suggestionBox.innerHTML = '';
+    suggestions.forEach(name => {
+      const div = document.createElement('div');
+      div.className = 'suggestion-item';
+      div.textContent = name;
+      div.onclick = function () {
+        inputEl.value = name;
+        suggestionBox.style.display = 'none';
+        entries[index].name = name;
+      };
+      suggestionBox.appendChild(div);
+    });
+
+    suggestionBox.style.display = 'block';
+    suggestionBox.style.top = `${rect.bottom + window.scrollY}px`;
+    suggestionBox.style.left = `${rect.left + window.scrollX}px`;
+  }
+
+  // 输入变化时更新数据
+  input.addEventListener('input', function () {
+    entries[index].name = this.value;
+  });
+
+  amountInput.addEventListener('input', function () {
+    entries[index].amount = this.value;
+  });
+
+  entries.push({ name: '', amount: '0.0' });
   div.appendChild(input);
+  div.appendChild(amountInput);
   container.appendChild(div);
 }
 
