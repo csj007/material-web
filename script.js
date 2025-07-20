@@ -75,7 +75,11 @@ function addMaterial() {
 // 提交记录
 function submitRecord() {
   const rows = document.querySelectorAll(".material-row");
-  const result = [];
+  const rawMaterials = [];
+  const codedMaterials = [];
+
+  let totalWeight1 = 0;
+  let totalWeight2 = 0;
 
   for (const row of rows) {
     const nameInput = row.querySelector("input[type='text']");
@@ -85,16 +89,41 @@ function submitRecord() {
 
     if (!name || isNaN(weight)) continue;
 
-    let finalName = name;
-    if (name in nameToCode) {
-      finalName = nameToCode[name];
-    }
+    rawMaterials.push({ name: name, weight: weight });
+    totalWeight1 += weight;
 
-    result.push(`${finalName}: ${weight}克`);
+    let finalCode = name;
+    if (name in nameToCode) {
+      finalCode = nameToCode[name];
+    }
+    codedMaterials.push({ name: finalCode, weight: weight });
+    totalWeight2 += weight;
   }
 
+  const table1 = createTable(rawMaterials, totalWeight1);
+  const table2 = createTable(codedMaterials, totalWeight2);
   const outputDiv = document.getElementById("output");
-  outputDiv.innerText = result.join("\n");
+  outputDiv.innerHTML = table1 + "<br>" + table2;
+}
+
+function createTable(materials, totalWeight) {
+  if (materials.length === 0) return "无记录";
+
+  const names = materials.map(m => m.name);
+  const weights = materials.map(m => `${m.weight} 克`);
+  const total = `总和: ${totalWeight} 克`;
+
+  // 构建表格上的标题行和下边的数据行
+  const headerRow = `| ${names.join(" | ")} | ${total} |`;
+  const headerSeparator = `|${"-".repeat(headerRow.length - 2)}|`;
+  const dataRow = `| ${weights.join(" | ")} | ${totalWeight} 克 |`;
+
+  return `
+    <table style="border-collapse: collapse; border: 1px solid #ccc; margin-bottom: 15px;">
+      <tr><td style="padding: 6px; border: 1px solid #ccc;">${headerRow}</td></tr>
+      <tr><td style="padding: 6px; border: 1px solid #ccc;">${dataRow}</td></tr>
+    </table>
+  `;
 }
 
 // 页面加载完成后初始化
