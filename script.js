@@ -110,6 +110,36 @@ function copyTable(button) {
   alert("表格已复制为可粘贴到 Excel 的格式");
 }
 
+function copyTableAsImage(button) {
+  const tableButtons = button.closest(".table-buttons");
+  const table = tableButtons.previousElementSibling;
+
+  if (!table || !table.classList.contains("material-table")) {
+    alert("无法找到表格！");
+    return;
+  }
+
+  html2canvas(table, {
+    useCORS: true,
+    allowTaint: true,
+    scale: 2,
+    logging: false
+  }).then(canvas => {
+    canvas.toBlob(blob => {
+      const image = new File([blob], "原料记录.png", { type: "image/png" });
+      const clipboardItem = new ClipboardItem({ [image.type]: image });
+
+      navigator.clipboard.write([clipboardItem]).then(() => {
+        alert("图片已复制到剪贴板，可以粘贴到 Word、PPT、Excel、腾讯文档等。");
+      }).catch(err => {
+        alert("当前浏览器不支持图片复制到剪贴板，请尝试使用 '保存图片' 按钮。");
+        // 回退为保存图片
+        saveTableAsImage(button);
+      });
+    });
+  });
+}
+
 function saveTableAsImage(button) {
   const tableButtons = button.closest(".table-buttons");
   const table = tableButtons.previousElementSibling;
@@ -126,33 +156,14 @@ function saveTableAsImage(button) {
     logging: false
   }).then(canvas => {
     canvas.toBlob(blob => {
-      // 尝试复制到剪贴板（现代浏览器）
-      if (navigator.clipboard && navigator.clipboard.write) {
-        const image = new File([blob], "原料记录.png", { type: "image/png" });
-        const clipboardItem = new ClipboardItem({ [image.type]: image });
-
-        navigator.clipboard.write([clipboardItem]).then(() => {
-          alert("图片已复制到剪贴板，你现在可以粘贴到 Word、PPT、Excel、腾讯文档等。");
-        }).catch(() => {
-          // 如果复制失败，就自动下载
-          downloadImage(blob);
-        });
-      } else {
-        // 如果不支持 clipboard API，就自动下载
-        downloadImage(blob);
-      }
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.download = "原料记录.png";
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
     });
   });
-}
-
-// 自动下载图片函数
-function downloadImage(blob) {
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.download = "原料记录.png";
-  link.href = url;
-  link.click();
-  URL.revokeObjectURL(url);
 }
 
 // 提交记录
@@ -227,7 +238,8 @@ function createMaterialTable(materials, totalWeight, title) {
     </table>
     <div class="table-buttons">
       <button onclick="copyTable(this)">复制表格</button>
-      <button onclick="saveTableAsImage(this)">保存为图片</button>
+      <button onclick="copyTableAsImage(this)">复制图片</button>
+      <button onclick="saveTableAsImage(this)">下载图片</button>
     </div>
   `;
 
