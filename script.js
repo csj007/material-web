@@ -7,10 +7,9 @@ async function loadMaterials() {
   try {
     const response = await fetch('materials.json');
     const data = await response.json();
-
     for (const item of data) {
-      const name = Object.keys(item)[0];
-      const code = item[name];
+      const name = item.name;
+      const code = item.tag;
       nameToCode[name] = code;
       allNames.push(name);
     }
