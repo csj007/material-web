@@ -83,30 +83,31 @@ function copyTable(button) {
 
   // 获取表格中的所有行
   const rows = table.querySelectorAll("tr");
-  let csvContent = "";
+  let tsvContent = "";
 
-  rows.forEach((row, rowIndex) => {
+  rows.forEach((row) => {
     const cells = row.querySelectorAll("th, td");
-
     const rowValues = Array.from(cells).map(cell => {
-      // 去掉单位只保留数值，让 Excel 能识别为数字
-      const content = cell.textContent.trim();
-      const numOnly = parseFloat(content);
-      return isNaN(numOnly) ? `"${content}"` : numOnly;
+      const text = cell.textContent.trim();
+      if (text.endsWith("克")) {
+        // 自动识别克数为数字
+        return parseFloat(text.replace(/克/g, ""));
+      }
+      return text;
     });
 
-    csvContent += rowValues.join("\t") + "\n";
+    tsvContent += rowValues.join("\t") + "\n";
   });
 
   // 创建临时 textarea
   const temp = document.createElement("textarea");
-  temp.value = csvContent;
+  temp.value = tsvContent;
   document.body.appendChild(temp);
   temp.select();
   document.execCommand("copy");
   document.body.removeChild(temp);
 
-  alert("表格已复制为可粘贴到 Excel 的格式（请用 Ctrl+V 粘贴）");
+  alert("表格已复制为可粘贴到 Excel 的格式（克数列将被识别为数字）");
 }
 
 function saveTableAsImage(button) {
