@@ -100,30 +100,40 @@ function submitRecord() {
     totalWeight2 += weight;
   }
 
-  const table1 = createTable(rawMaterials, totalWeight1);
-  const table2 = createTable(codedMaterials, totalWeight2);
+  const table1 = createMaterialTable(rawMaterials, totalWeight1, "原料名称");
+  const table2 = createMaterialTable(codedMaterials, totalWeight2, "原料编号");
+
   const outputDiv = document.getElementById("output");
   outputDiv.innerHTML = table1 + "<br>" + table2;
 }
 
-function createTable(materials, totalWeight) {
-  if (materials.length === 0) return "无记录";
+function createMaterialTable(materials, totalWeight, title) {
+  if (materials.length === 0) return `<p style="color:red;">该部分暂无数据</p>`;
 
   const names = materials.map(m => m.name);
   const weights = materials.map(m => `${m.weight} 克`);
-  const total = `总和: ${totalWeight} 克`;
 
-  // 构建表格上的标题行和下边的数据行
-  const headerRow = `| ${names.join(" | ")} | ${total} |`;
-  const headerSeparator = `|${"-".repeat(headerRow.length - 2)}|`;
-  const dataRow = `| ${weights.join(" | ")} | ${totalWeight} 克 |`;
-
-  return `
-    <table style="border-collapse: collapse; border: 1px solid #ccc; margin-bottom: 15px;">
-      <tr><td style="padding: 6px; border: 1px solid #ccc;">${headerRow}</td></tr>
-      <tr><td style="padding: 6px; border: 1px solid #ccc;">${dataRow}</td></tr>
+  const table = `
+    <table class="material-table" style="width:100%; border-collapse: collapse; margin-top: 10px;">
+      <thead>
+        <tr>
+          <th colspan="${materials.length + 1}" style="text-align:center; background-color:#3498db; color:white; padding: 10px;">${title}</th>
+        </tr>
+        <tr>
+          ${names.map(name => `<th style="border:1px solid #ddd; padding: 8px;">${name}</th>`).join("")}
+          <th style="border:1px solid #ddd; padding: 8px;">总和</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          ${weights.map(weight => `<td style="border:1px solid #ddd; padding: 8px; text-align:center;">${weight}</td>`).join("")}
+          <td style="border:1px solid #ddd; padding: 8px; text-align:center; font-weight:bold;">${totalWeight} 克</td>
+        </tr>
+      </tbody>
     </table>
   `;
+
+  return table;
 }
 
 // 页面加载完成后初始化
