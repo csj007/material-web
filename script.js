@@ -78,8 +78,8 @@ function submitRecord() {
   const rawMaterials = [];
   const codedMaterials = [];
 
-  let totalWeight1 = 0;
-  let totalWeight2 = 0;
+  const weight1List = [];
+  const weight2List = [];
 
   for (const row of rows) {
     const nameInput = row.querySelector("input[type='text']");
@@ -90,15 +90,18 @@ function submitRecord() {
     if (!name || isNaN(weight)) continue;
 
     rawMaterials.push({ name: name, weight: weight });
-    totalWeight1 += weight;
+    weight1List.push(weight);
 
     let finalCode = name;
     if (name in nameToCode) {
       finalCode = nameToCode[name];
     }
     codedMaterials.push({ name: finalCode, weight: weight });
-    totalWeight2 += weight;
+    weight2List.push(weight);
   }
+
+  const totalWeight1 = parseFloat(sumWithPrecision(weight1List, 4));
+  const totalWeight2 = parseFloat(sumWithPrecision(weight2List, 4));
 
   const table1 = createMaterialTable(rawMaterials, totalWeight1, "原料名称");
   const table2 = createMaterialTable(codedMaterials, totalWeight2, "原料编号");
@@ -107,11 +110,19 @@ function submitRecord() {
   outputDiv.innerHTML = table1 + "<br>" + table2;
 }
 
+// 精度求和函数
+function sumWithPrecision(numbers, decimals = 4) {
+  return numbers.reduce((total, num) => total + Number(num.toFixed(decimals)), 0).toFixed(decimals);
+}
+
 function createMaterialTable(materials, totalWeight, title) {
   if (materials.length === 0) return `<p style="color:red;">该部分暂无数据</p>`;
 
   const names = materials.map(m => m.name);
   const weights = materials.map(m => `${m.weight} 克`);
+
+  // 总和保留两位小数
+  const formattedTotal = `${totalWeight.toFixed(4)} 克`;
 
   const table = `
     <table class="material-table" style="width:100%; border-collapse: collapse; margin-top: 10px;">
@@ -127,7 +138,7 @@ function createMaterialTable(materials, totalWeight, title) {
       <tbody>
         <tr>
           ${weights.map(weight => `<td style="border:1px solid #ddd; padding: 8px; text-align:center;">${weight}</td>`).join("")}
-          <td style="border:1px solid #ddd; padding: 8px; text-align:center; font-weight:bold;">${totalWeight} 克</td>
+          <td style="border:1px solid #ddd; padding: 8px; text-align:center; font-weight:bold;">${formattedTotal}</td>
         </tr>
       </tbody>
     </table>
