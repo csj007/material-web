@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <title>原料记录系统</title>
   <style>
     body {
@@ -133,6 +134,27 @@
         font-size: 14px;
         padding: 6px;
       }
+    }
+    .table-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      justify-content: flex-end;
+    }
+    
+    .table-buttons button {
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s ease;
+    }
+    
+    .table-buttons button:hover {
+      background-color: #219150;
     }
   </style>
 </head>
