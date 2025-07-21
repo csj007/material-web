@@ -271,8 +271,12 @@ async function addNewMaterial() {
   const tag = document.getElementById("materialTag").value.trim();
   const errorDiv = document.getElementById("materialError");
 
+  const button = document.querySelector("#addMaterialModal button"); // 获取按钮
+  button.disabled = true; // 禁用按钮
+
   if (!name || !tag) {
     errorDiv.textContent = "药品名称和编号不能为空";
+    button.disabled = false;
     return;
   }
 
@@ -316,6 +320,8 @@ async function addNewMaterial() {
     }
   } catch (err) {
     errorDiv.textContent = "保存失败：" + err;
+  } finally {
+    button.disabled = false; // 最后不管成功或失败，都启用按钮
   }
 }
 
