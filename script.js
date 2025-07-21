@@ -323,8 +323,8 @@ async function showMaterialListModal() {
 
     const headerRow = document.createElement("tr");
     headerRow.innerHTML = `
-      <th style="width:300px; padding:8px; background:#3498db; color:white;">名称</th>
-      <th style="width:300px; padding:8px; background:#3498db; color:white;">编号</th>
+      <th style="width:240px; padding:8px; background:#3498db; color:white;">名称</th>
+      <th style="width:240px; padding:8px; background:#3498db; color:white;">编号</th>
       <th style="padding:8px; background:#3498db; color:white;">操作</th>
     `;
     table.appendChild(headerRow);
