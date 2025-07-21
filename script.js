@@ -334,11 +334,11 @@ async function showMaterialListModal() {
 
       const nameCell = document.createElement("td");
       nameCell.style.padding = "8px";
-      nameCell.innerHTML = `<input type="text" value="${item.name}" style="width:100%; padding:5px;">`;
+      nameCell.innerHTML = `<input type="text" value="${item.name}" style="width:80%; padding:5px;">`;
 
       const tagCell = document.createElement("td");
       tagCell.style.padding = "8px";
-      tagCell.innerHTML = `<input type="text" value="${item.tag}" style="width:100%; padding:5px;">`;
+      tagCell.innerHTML = `<input type="text" value="${item.tag}" style="width:80%; padding:5px;">`;
 
       const actionCell = document.createElement("td");
       actionCell.style.padding = "8px";
