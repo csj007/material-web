@@ -23,15 +23,22 @@ app.post("/api/save", (req, res) => {
   if (!Array.isArray(data)) {
     return res.status(400).json({ message: "数据格式错误" });
   }
-
   const filePath = path.join(__dirname, "materials.json");
-
-  fs.writeFile(filePath, JSON.stringify(data, null, 2), (err) => {
+  const tmpPath = path.join(__dirname, "materials.json.tmp");
+  
+  fs.writeFile(tmpPath, JSON.stringify(data, null, 2), (err) => {
     if (err) {
-      console.error("写入失败:", err);
-      return res.status(500).json({ message: "保存失败" });
+      console.error("临时写入失败:", err);
+      return res.status(500).json({ message: "保存失败 (临时文件)" });
     }
-    res.json({ message: "保存成功" });
+
+    fs.rename(tmpPath, filePath, (err) => {
+      if (err) {
+        console.error("重命名失败，可能回写入失败:", err);
+        return res.status(500).json({ message: "保存失败 (重命名)" });
+      }
+      res.json({ message: "保存成功" });
+    });
   });
 });
 
