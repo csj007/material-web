@@ -15,6 +15,7 @@ async function loadMaterials() {
       nameToCode[name] = code;
       allNames.push(name);
     }
+    updateAllDatalists();
   } catch (err) {
     console.error("加载材料数据失败:", err);
   }
@@ -205,7 +206,18 @@ function submitRecord() {
   const outputDiv = document.getElementById("output");
   outputDiv.innerHTML = table1 + "<br>" + table2;
 }
-
+function updateAllDatalists() {
+  const datalists = document.querySelectorAll("datalist");
+  for (const datalist of datalists) {
+    const id = datalist.id;
+    datalist.innerHTML = "";
+    for (const name of allNames) {
+      const option = document.createElement("option");
+      option.value = name;
+      datalist.appendChild(option);
+    }
+  }
+}
 // 精度求和函数
 function sumWithPrecision(numbers, decimals = 4) {
   return numbers.reduce((total, num) => total + Number(num.toFixed(decimals)), 0).toFixed(decimals);
@@ -294,6 +306,7 @@ async function addNewMaterial() {
       alert("药品已成功添加！");
       // 重新加载材料数据
       await loadMaterials();
+      updateAllDatalists();
       // 关闭弹窗
       document.getElementById("addMaterialModal").style.display = "none";
     } else {
@@ -369,6 +382,8 @@ async function showMaterialListModal() {
         });
 
         alert("药品信息已修改！");
+        await loadMaterials();
+        updateAllDatalists();
         showMaterialListModal(); // 刷新列表
       };
 
@@ -385,6 +400,8 @@ async function showMaterialListModal() {
             body: JSON.stringify(filteredMaterials),
           });
           alert("药品已删除！");
+          await loadMaterials();
+          updateAllDatalists();
           showMaterialListModal(); // 刷新列表
         }
       };
