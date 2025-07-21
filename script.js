@@ -169,6 +169,19 @@ function saveTableAsImage(button) {
   });
 }
 
+function updateAllDatalists() {
+  const datalists = document.querySelectorAll("datalist");
+  for (const datalist of datalists) {
+    const id = datalist.id;
+    datalist.innerHTML = "";
+    for (const name of allNames) {
+      const option = document.createElement("option");
+      option.value = name;
+      datalist.appendChild(option);
+    }
+  }
+}
+
 // 提交记录
 function submitRecord() {
   const rows = document.querySelectorAll(".material-row");
@@ -206,18 +219,7 @@ function submitRecord() {
   const outputDiv = document.getElementById("output");
   outputDiv.innerHTML = table1 + "<br>" + table2;
 }
-function updateAllDatalists() {
-  const datalists = document.querySelectorAll("datalist");
-  for (const datalist of datalists) {
-    const id = datalist.id;
-    datalist.innerHTML = "";
-    for (const name of allNames) {
-      const option = document.createElement("option");
-      option.value = name;
-      datalist.appendChild(option);
-    }
-  }
-}
+
 // 精度求和函数
 function sumWithPrecision(numbers, decimals = 4) {
   return numbers.reduce((total, num) => total + Number(num.toFixed(decimals)), 0).toFixed(decimals);
