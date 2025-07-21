@@ -214,8 +214,8 @@
   <button onclick="showMaterialListModal()">查看药品清单</button>
   <div id="materialContainer"></div>
   <div id="output"></div>
-  <!-- 模态窗口 -->
-  <div id="addMaterialModal" style="display:none; position:fixed; top:20%; left:30%; background:#fff; padding:20px; border:1px solid #ccc; z-index:1000;">
+  <!-- 新增药品 Modal -->
+  <div id="addMaterialModal" class="modal-window" style="display:none;">
     <h3>新增药品</h3>
     <label>药品名称:</label><br>
     <input type="text" id="materialName" style="width:100%; margin-bottom:10px;"><br>
@@ -226,7 +226,7 @@
     <div id="materialError" style="color:red; margin-top:10px;"></div>
   </div>
   <!-- 查看药品清单 Modal -->
-  <div id="materialListModal" style="display:none; position:fixed; top:10%; left:20%; background:#fff; padding:20px; border:1px solid #ccc; z-index:1000; width:600px;">
+  <div id="materialListModal" class="modal-window" style="display:none;">
     <h3>药品清单</h3>
     <div id="materialListContent"></div>
     <button onclick="document.getElementById('materialListModal').style.display = 'none';">关闭</button>
