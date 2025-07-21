@@ -156,6 +156,54 @@
     .table-buttons button:hover {
       background-color: #219150;
     }
+    
+    .modal-window {
+      position: fixed;
+      top: 10%;
+      left: 20%;
+      background: #fff;
+      padding: 20px;
+      border: 1px solid #ccc;
+      z-index: 1000;
+      width: 600px;
+      max-width: 90%;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    
+    .modal-window table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    
+    .modal-window th,
+    .modal-window td {
+      padding: 8px;
+      text-align: center;
+      border: 1px solid #ddd;
+      word-break: break-all;
+    }
+    
+    .modal-window input[type="text"] {
+      width: 100%;
+      padding: 5px;
+      box-sizing: border-box;
+      max-width: 200px;
+      font-size: 14px;
+    }
+    
+    .modal-window button {
+      margin: 0 2px;
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+    
+    .modal-window th {
+      background-color: #3498db;
+      color: white;
+    }
   </style>
 </head>
 <body>
