@@ -382,7 +382,7 @@ async function showMaterialListModal() {
         });
 
         alert("药品信息已修改！");
-        await loadMaterials();
+        loadMaterials();
         updateAllDatalists();
         showMaterialListModal(); // 刷新列表
       };
@@ -400,7 +400,7 @@ async function showMaterialListModal() {
             body: JSON.stringify(filteredMaterials),
           });
           alert("药品已删除！");
-          await loadMaterials();
+          loadMaterials();
           updateAllDatalists();
           showMaterialListModal(); // 刷新列表
         }
