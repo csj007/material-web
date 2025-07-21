@@ -317,6 +317,7 @@ async function showMaterialListModal() {
     }
 
     const table = document.createElement("table");
+    table.className = "modal-window table";
     table.border = "1";
     table.style.width = "100%";
     table.style.borderCollapse = "collapse";
