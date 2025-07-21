@@ -217,10 +217,39 @@
       z-index: 1000;
       width: 600px;
       max-width: 90%;
-      max-height: 80vh;  /* 限制弹窗最大高度为视口的 80% */
-      overflow: auto;     /* 让弹窗整体内容滚动 */
+      max-height: 600px; /* 限制弹窗最大高度 */
+      overflow: hidden;   /* 防止弹窗整体滚动 */
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* 表格内容区域 */
+    #materialListContent {
+      flex: 1;
+      max-height: 400px; /* 限制表格区域高度 */
+      overflow-y: auto;   /* 表格内容滚动 */
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    
+    /* 关闭按钮区域 */
+    #materialListModal button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    #materialListModal button:hover {
+      background-color: #2980b9;
     }
   </style>
 </head>
