@@ -1,6 +1,6 @@
 项目根目录运行：npm install mongoose dotenv
 创建.env文件（放在根目录）
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?retryWrites=true&w=majority
+mongodb+srv://csj007:6625467z@cluster0.fsuag2f.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 
 // server.js
 const express = require("express");
