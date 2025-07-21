@@ -204,6 +204,24 @@
       background-color: #3498db;
       color: white;
     }
+
+    /* 查看药品清单弹窗样式 */
+    #materialListModal {
+      display: none;
+      position: fixed;
+      top: 10%;
+      left: 20%;
+      background: #fff;
+      padding: 20px;
+      border: 1px solid #ccc;
+      z-index: 1000;
+      width: 600px;
+      max-width: 90%;
+      max-height: 80vh;  /* 限制弹窗最大高度为视口的 80% */
+      overflow: auto;     /* 让弹窗整体内容滚动 */
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 6px;
+    }
   </style>
 </head>
 <body>
@@ -226,11 +244,9 @@
     <div id="materialError" style="color:red; margin-top:10px;"></div>
   </div>
   <!-- 查看药品清单 Modal -->
-  <div id="materialListModal" class="modal-window" style="display:none;">
+  <div id="materialListModal">
     <h3>药品清单</h3>
-    <div id="materialListContent"
-         style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
-    </div>
+    <div id="materialListContent"></div>
     <button onclick="document.getElementById('materialListModal').style.display = 'none';">关闭</button>
   </div>
   <script src="script.js"></script>
