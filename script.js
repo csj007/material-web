@@ -304,6 +304,108 @@ async function addNewMaterial() {
   }
 }
 
+async function showMaterialListModal() {
+  try {
+    const response = await fetch("/materials.json");
+    const materials = await response.json();
+    const container = document.getElementById("materialListContent");
+    container.innerHTML = "";
+
+    if (materials.length === 0) {
+      container.innerHTML = `<p>暂无药品记录。</p>`;
+      return;
+    }
+
+    const table = document.createElement("table");
+    table.border = "1";
+    table.style.width = "100%";
+    table.style.borderCollapse = "collapse";
+
+    const headerRow = document.createElement("tr");
+    headerRow.innerHTML = `
+      <th style="padding:8px; background:#3498db; color:white;">名称</th>
+      <th style="padding:8px; background:#3498db; color:white;">编号</th>
+      <th style="padding:8px; background:#3498db; color:white;">操作</th>
+    `;
+    table.appendChild(headerRow);
+
+    for (const item of materials) {
+      const row = document.createElement("tr");
+
+      const nameCell = document.createElement("td");
+      nameCell.style.padding = "8px";
+      nameCell.innerHTML = `<input type="text" value="${item.name}" style="width:100%; padding:5px;">`;
+
+      const tagCell = document.createElement("td");
+      tagCell.style.padding = "8px";
+      tagCell.innerHTML = `<input type="text" value="${item.tag}" style="width:100%; padding:5px;">`;
+
+      const actionCell = document.createElement("td");
+      actionCell.style.padding = "8px";
+
+      const editBtn = document.createElement("button");
+      editBtn.innerText = "修改";
+      editBtn.onclick = async () => {
+        const newName = nameCell.querySelector("input").value.trim();
+        const newTag = tagCell.querySelector("input").value.trim();
+        if (newName === "" || newTag === "") {
+          alert("名称与编号不能为空！");
+          return;
+        }
+
+        const updatedMaterials = materials.map(m => {
+          if (m.name === item.name) {
+            return { name: newName, tag: newTag };
+          }
+          return m;
+        });
+
+        await fetch("/api/save", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedMaterials),
+        });
+
+        alert("药品信息已修改！");
+        showMaterialListModal(); // 刷新列表
+      };
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.innerText = "删除";
+      deleteBtn.onclick = () => {
+        if (confirm("确定要删除该药品吗？")) {
+          const filteredMaterials = materials.filter(m => m.name !== item.name);
+          fetch("/api/save", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(filteredMaterials),
+          });
+          alert("药品已删除！");
+          showMaterialListModal(); // 刷新列表
+        }
+      };
+
+      actionCell.appendChild(editBtn);
+      actionCell.appendChild(deleteBtn);
+
+      row.appendChild(nameCell);
+      row.appendChild(tagCell);
+      row.appendChild(actionCell);
+
+      table.appendChild(row);
+    }
+
+    container.appendChild(table);
+    document.getElementById("materialListModal").style.display = "block";
+  } catch (err) {
+    alert("加载药品清单失败：" + err);
+  }
+}
+
 // 页面加载完成后初始化
 window.onload = async () => {
   await loadMaterials();
