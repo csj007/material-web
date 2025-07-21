@@ -281,7 +281,7 @@ async function addNewMaterial() {
 
   // 写入新的数据回 materials.json（需要服务端支持）
   try {
-    const res = await fetch("https://material-5ip4.onrender.com", {
+    const res = await fetch("/api/save", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
