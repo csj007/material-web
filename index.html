@@ -162,7 +162,8 @@
   <h2>原料记录系统</h2>
   <button onclick="addMaterial()"><i class="fas fa-plus"></i> 添加原料</button>
   <button onclick="submitRecord()"><i class="fas fa-check"></i> 提交记录</button>
-   <button onclick="showAddMaterialModal()"><i class="fas fa-plus-square"></i> 新增药品</button>
+  <button onclick="showAddMaterialModal()"><i class="fas fa-plus-square"></i> 新增药品</button>
+  <button onclick="showMaterialListModal()">查看药品清单</button>
   <div id="materialContainer"></div>
   <div id="output"></div>
   <!-- 模态窗口 -->
@@ -175,6 +176,12 @@
     <button onclick="addNewMaterial()">录入药品</button>
     <button onclick="document.getElementById('addMaterialModal').style.display='none';">取消</button>
     <div id="materialError" style="color:red; margin-top:10px;"></div>
+  </div>
+  <!-- 查看药品清单 Modal -->
+  <div id="materialListModal" style="display:none; position:fixed; top:10%; left:20%; background:#fff; padding:20px; border:1px solid #ccc; z-index:1000; width:600px;">
+    <h3>药品清单</h3>
+    <div id="materialListContent"></div>
+    <button onclick="document.getElementById('materialListModal').style.display = 'none';">关闭</button>
   </div>
   <script src="script.js"></script>
 </body>
